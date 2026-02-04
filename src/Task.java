@@ -1,4 +1,7 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.time.LocalDate;
+import java.util.Scanner;
 
 public class Task {
     private int id;
@@ -15,14 +18,27 @@ public class Task {
         this.updatedAt = LocalDate.now();
     }
 
+    Task(String description) {
+        this.id = getLastId();
+        this.description = description;
+        this.status = TaskStatus.TODO;
+        this.createdAt = LocalDate.now();
+        this.updatedAt = LocalDate.now();
+    }
+
+    private int getLastId() {
+        return 0;
+    }
+
+
     public String toJsonObjectString() {
-        return "{" + "\n" +
-                "\"id\":" + id + "," +"\n" +
-                "\"description\":" + "\"" +description + "\"," + "\n" +
-                "\"status\":" + "\"" +status + "\"," + "\n" +
-                "\"createdAt\":" + "\"" + createdAt.toString() + "\","+ "\n" +
-                "\"updatedAt\":" + "\"" + updatedAt.toString() + "\"" + "\n" +
-                '}';
+        return "{"
+                + "\"id\":" + id + ","
+                + "\"description\":" + "\"" +description + "\","
+                + "\"status\":" + "\"" + status + "\","
+                + "\"createdAt\":" + "\"" + createdAt.toString() + "\","
+                + "\"updatedAt\":" + "\"" + updatedAt.toString() + "\""
+                + "}";
     }
 
     @Override

@@ -1,21 +1,34 @@
-import java.io.File;
-import java.io.IOException;
-
-
 public class TaskCli {
-    final private String path = "C:\\taskcli";
-    final private String jsonName = "taskCliDba.json";
+    final private static String directory = "C:\\task-cli";
+    final private static String databaseName = "database.json";
+    private static TaskFileManager taskFileManager = null;
 
     TaskCli() {
-        createDirectory();
-        createJsonFile();
+        try {
+            taskFileManager = new TaskFileManager(directory, databaseName);
+            taskFileManager.createDirectory();
+            taskFileManager.createJsonFile();
+        } catch (Exception e) {
+            System.out.println("Nao foi possivel verificar a base");
+        }
     }
 
     static void main(String[] args) {
-        doAction(args);
+        TaskCli taskCli = new TaskCli();
+        taskCli.doAction(args);
     }
 
-    private static void doAction(String[] args) {
+    private static void addTask(String[] args) {
+        try {
+            String taskDescription = args[1];
+            Task newTask = new Task(taskDescription);
+            taskFileManager.saveTask(newTask);
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("Invalid argument, please use: TaskCli add [taskDescription]");
+        }
+    }
+
+    private void doAction(String[] args) {
         try {
             String action = args[0];
             switch (action) {
@@ -120,15 +133,6 @@ public class TaskCli {
         }
     }
 
-    private static void addTask(String[] args) {
-        try {
-            String taskDecription = args[1];
-            System.out.println("Adding a task: " + taskDecription);
-        } catch (IndexOutOfBoundsException e) {
-            System.out.println("Invalid argument, please use: TaskCli add [taskDescription]");
-        }
-    }
-
     private static void updateTask(String[] args) {
         try {
             String taskDescription = args[2];
@@ -141,51 +145,9 @@ public class TaskCli {
         }
     }
 
-    private void createJsonFile() {
-        System.out.print("Json file check... ");
-        try {
-            File jsonFile = new File(getFullFilePath());
-            if(!jsonFile.createNewFile()) {
-                checkFileExistence(jsonFile);
-            } else {
-                System.out.println("Created!");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
-    private String getFullFilePath() {
-        return path + "\\" + jsonName;
-    }
 
-    private void checkFileExistence(File fileObj) throws IOException {
-        if(fileObj.exists()) {
-            System.out.println(" OK");
-        } else {
-            throw new IOException("WARNING: The file could not be created.");
-        }
-    }
-
-    private void createDirectory() {
-        System.out.print("Directory check... ");
-        try {
-            File pathDirectory = new File(path);
-            if(!pathDirectory.mkdir()) {
-                checkDirectoryExistence(pathDirectory);
-            } else {
-                System.out.println("Created!");
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void checkDirectoryExistence(File directoryFileObj) throws IOException {
-        if(directoryFileObj.exists()) {
-            System.out.println(" OK");
-        } else {
-            throw new IOException("WARNING: The directory could not be created.");
-        }
+    private static String getFullFilePath() {
+        return directory + "\\" + databaseName;
     }
 }
