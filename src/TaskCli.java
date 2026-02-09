@@ -8,6 +8,7 @@ public class TaskCli {
             taskFileManager = new TaskFileManager(directory, databaseName);
             taskFileManager.createDirectory();
             taskFileManager.createJsonFile();
+            taskFileManager.getLastId();
         } catch (Exception e) {
             System.out.println("Nao foi possivel verificar a base");
         }
@@ -144,8 +145,6 @@ public class TaskCli {
             System.out.println("Insert a valid id");
         }
     }
-
-
 
     private static String getFullFilePath() {
         return directory + "\\" + databaseName;

@@ -1,7 +1,4 @@
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.time.LocalDate;
-import java.util.Scanner;
 
 public class Task {
     private int id;
@@ -30,8 +27,11 @@ public class Task {
         return 0;
     }
 
+    public int getId() {
+        return id;
+    }
 
-    public String toJsonObjectString() {
+    public String toJson() {
         return "{"
                 + "\"id\":" + id + ","
                 + "\"description\":" + "\"" +description + "\","

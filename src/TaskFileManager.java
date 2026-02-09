@@ -18,25 +18,30 @@ public class TaskFileManager {
         return Paths.get(directory, filename).toString();
     }
 
+    public void getLastId() {
+        String data = readDatabaseFile();
+        System.out.println(data);
+    }
+
     public void saveTask(Task newTask) {
         try{
             String newDatabaseString = prepareNewStringDatabase(newTask);
             FileWriter fileWriter = new FileWriter(resolveDatabasePath());
             fileWriter.write(newDatabaseString);
             fileWriter.close();
-            System.out.println("Salvo com sucesso");
+            System.out.println("A task foi salva com sucesso [ID: " + newTask.getId() + "]");
         } catch (IOException e) {
             System.out.println("Não foi possivel salvar");
         }
     }
 
     private String prepareNewStringDatabase(Task newTask) {
-        String objTaskString = newTask.toJsonObjectString();
-        String databaString = readDatabaseFile();
-        if(databaString.isEmpty()) {
+        String objTaskString = newTask.toJson();
+        String databaseString = readDatabaseFile();
+        if(databaseString.isEmpty()) {
             return "[" + objTaskString + "]";
         } else {
-            return removeClosingSquareBracket(databaString) + ",\n" + objTaskString + "]";
+            return removeClosingSquareBracket(databaseString) + ",\n" + objTaskString + "]";
         }
     }
 
