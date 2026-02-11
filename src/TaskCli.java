@@ -8,7 +8,6 @@ public class TaskCli {
             taskFileManager = new TaskFileManager(directory, databaseName);
             taskFileManager.createDirectory();
             taskFileManager.createJsonFile();
-            taskFileManager.getLastId();
         } catch (Exception e) {
             System.out.println("Nao foi possivel verificar a base");
         }
@@ -16,7 +15,15 @@ public class TaskCli {
 
     static void main(String[] args) {
         TaskCli taskCli = new TaskCli();
-        taskCli.doAction(args);
+        //taskCli.doAction(args);
+        taskCli.test();
+    }
+
+    public void test(){
+        System.out.println("Printando as tasks como objetos task");
+        for(Task ts : taskFileManager.getTasksList()) {
+            System.out.println(ts);
+        }
     }
 
     private static void addTask(String[] args) {

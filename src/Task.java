@@ -1,4 +1,6 @@
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Task {
     private int id;
@@ -6,6 +8,14 @@ public class Task {
     private TaskStatus status;
     private LocalDate createdAt;
     private LocalDate updatedAt;
+
+    private Task(String id, String description, String taskStatus, String createdAt, String updatedAt) {
+        this.id = Integer.parseInt(id);
+        this.description = description;
+        this.status = TaskStatus.of(taskStatus);
+        this.createdAt = LocalDate.parse(createdAt);
+        this.updatedAt = LocalDate.parse(updatedAt);
+    }
 
     Task(int id, String description) {
         this.id = id;
@@ -29,6 +39,34 @@ public class Task {
 
     public int getId() {
         return id;
+    }
+
+    public static Task fromJson(String taskString) {
+        List<String> attributesValuesList = new ArrayList<>();
+
+        String[] taskAttributes = taskString
+                .replace("{", "")
+                .replace("}","")
+                .split(",\"");
+
+        for(String attribute: taskAttributes) {
+            if(!attribute.contains(":")) {
+                throw new IllegalArgumentException("Json da task Invalido: " + taskString);
+            } else {
+                attribute = attribute
+                        .replace("\"", "")
+                        .replace(",", "")
+                        .split(":")[1].trim();
+
+                attributesValuesList.add(attribute);
+            }
+        }
+
+        return new Task(attributesValuesList.get(0),
+                attributesValuesList.get(1),
+                attributesValuesList.get(2),
+                attributesValuesList.get(3),
+                attributesValuesList.get(4));
     }
 
     public String toJson() {

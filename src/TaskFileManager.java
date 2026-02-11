@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TaskFileManager {
     private final String filename;
@@ -21,6 +23,21 @@ public class TaskFileManager {
     public void getLastId() {
         String data = readDatabaseFile();
         System.out.println(data);
+    }
+
+    public List<Task> getTasksList() {
+        List<Task> taskAsTasks = new ArrayList<>();
+        for(String ts : getStringTasksList()) {
+            taskAsTasks.add(Task.fromJson(ts));
+        }
+        return taskAsTasks;
+    }
+
+    private String[] getStringTasksList() {
+        return readDatabaseFile()
+                .replace("[", "")
+                .replace("]", "")
+                .split("},");
     }
 
     public void saveTask(Task newTask) {
