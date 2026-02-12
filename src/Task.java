@@ -1,6 +1,8 @@
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Task {
     private int id;
@@ -42,31 +44,30 @@ public class Task {
     }
 
     public static Task fromJson(String taskString) {
-        List<String> attributesValuesList = new ArrayList<>();
+        Map<String, String> propertiesTaskMap = new HashMap<>();
 
-        String[] taskAttributes = taskString
-                .replace("{", "")
-                .replace("}","")
-                .split(",\"");
+        System.out.println("Processando dados da tarefa: " + taskString);
 
-        for(String attribute: taskAttributes) {
-            if(!attribute.contains(":")) {
-                throw new IllegalArgumentException("Json da task Invalido: " + taskString);
-            } else {
-                attribute = attribute
-                        .replace("\"", "")
-                        .replace(",", "")
-                        .split(":")[1].trim();
+        String[] propertiesTask = taskString
+                .replaceAll("^\\{|}$", "")
+                .split("(?<=\")?,\\s*(?=\")");
 
-                attributesValuesList.add(attribute);
+        for (String prop : propertiesTask) {
+
+            String[] keyAndValue = prop.split(":", 2);
+
+            if (keyAndValue.length == 2) {
+                String key = keyAndValue[0].trim().replace("\"", "");
+                String value = keyAndValue[1].trim().replace("\"", "");
+
+                propertiesTaskMap.put(key, value);
             }
         }
 
-        return new Task(attributesValuesList.get(0),
-                attributesValuesList.get(1),
-                attributesValuesList.get(2),
-                attributesValuesList.get(3),
-                attributesValuesList.get(4));
+        System.out.println("ID da tarefa: " + propertiesTaskMap.get("id"));
+        System.out.println("Description: " + propertiesTaskMap.get("description"));
+
+        return null;
     }
 
     public String toJson() {

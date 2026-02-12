@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class TaskCli {
     final private static String directory = "C:\\task-cli";
     final private static String databaseName = "database.json";
@@ -20,10 +22,11 @@ public class TaskCli {
     }
 
     public void test(){
-        System.out.println("Printando as tasks como objetos task");
-        for(Task ts : taskFileManager.getTasksList()) {
-            System.out.println(ts);
-        }
+        List<Task> tasks = taskFileManager.getTasksList();
+//        System.out.println("Printando as tasks como objetos task");
+//        for(Task ts : taskFileManager.getTasksList()) {
+//            System.out.println(ts);
+//        }
     }
 
     private static void addTask(String[] args) {

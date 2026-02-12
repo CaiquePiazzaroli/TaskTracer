@@ -6,6 +6,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TaskFileManager {
     private final String filename;
@@ -27,17 +29,22 @@ public class TaskFileManager {
 
     public List<Task> getTasksList() {
         List<Task> taskAsTasks = new ArrayList<>();
+
         for(String ts : getStringTasksList()) {
-            taskAsTasks.add(Task.fromJson(ts));
+           taskAsTasks.add(Task.fromJson(ts));
         }
         return taskAsTasks;
     }
 
     private String[] getStringTasksList() {
+        // (?<=}) --> Antes da virgula tem um } ?
+        // \\s* --> Pode ou nao conter espaço e apaga
+        // (?=\{) --> Contem um { em seguida ?
+        // ^\[|]$ --> apaga [ do inicio (^) da linha e ] final (&)
         return readDatabaseFile()
-                .replace("[", "")
-                .replace("]", "")
-                .split("},");
+                .trim()
+                .replaceAll("^\\[|]$", "")
+                .split("(?<=}),\\s*(?=\\{)");
     }
 
     public void saveTask(Task newTask) {
