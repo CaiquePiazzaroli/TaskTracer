@@ -17,22 +17,18 @@ public class TaskCli {
 
     static void main(String[] args) {
         TaskCli taskCli = new TaskCli();
-        //taskCli.doAction(args);
-        taskCli.test();
+        taskCli.doAction(args);
     }
 
     public void test(){
-        List<Task> tasks = taskFileManager.getTasksList();
-//        System.out.println("Printando as tasks como objetos task");
-//        for(Task ts : taskFileManager.getTasksList()) {
-//            System.out.println(ts);
-//        }
+        taskFileManager.getLastId();
     }
 
     private static void addTask(String[] args) {
         try {
             String taskDescription = args[1];
-            Task newTask = new Task(taskDescription);
+            int nextId = taskFileManager.getLastId() + 1;
+            Task newTask = new Task(nextId, taskDescription);
             taskFileManager.saveTask(newTask);
         } catch (IndexOutOfBoundsException e) {
             System.out.println("Invalid argument, please use: TaskCli add [taskDescription]");

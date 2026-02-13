@@ -46,16 +46,12 @@ public class Task {
     public static Task fromJson(String taskString) {
         Map<String, String> propertiesTaskMap = new HashMap<>();
 
-        System.out.println("Processando dados da tarefa: " + taskString);
-
         String[] propertiesTask = taskString
                 .replaceAll("^\\{|}$", "")
                 .split("(?<=\")?,\\s*(?=\")");
 
         for (String prop : propertiesTask) {
-
             String[] keyAndValue = prop.split(":", 2);
-
             if (keyAndValue.length == 2) {
                 String key = keyAndValue[0].trim().replace("\"", "");
                 String value = keyAndValue[1].trim().replace("\"", "");
@@ -63,11 +59,18 @@ public class Task {
                 propertiesTaskMap.put(key, value);
             }
         }
+//        System.out.println(propertiesTaskMap.get("id"));
+//        System.out.println(propertiesTaskMap.get("description"));
+//        System.out.println(propertiesTaskMap.get("status"));
+//        System.out.println(propertiesTaskMap.get("createdAt"));
+//        System.out.println(propertiesTaskMap.get("updatedAt"));
 
-        System.out.println("ID da tarefa: " + propertiesTaskMap.get("id"));
-        System.out.println("Description: " + propertiesTaskMap.get("description"));
-
-        return null;
+        return new Task(
+                propertiesTaskMap.get("id"),
+                propertiesTaskMap.get("description"),
+                propertiesTaskMap.get("status"),
+                propertiesTaskMap.get("createdAt"),
+                propertiesTaskMap.get("updatedAt"));
     }
 
     public String toJson() {

@@ -6,8 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class TaskFileManager {
     private final String filename;
@@ -22,27 +20,35 @@ public class TaskFileManager {
         return Paths.get(directory, filename).toString();
     }
 
-    public void getLastId() {
-        String data = readDatabaseFile();
-        System.out.println(data);
-    }
+    public int getLastId() {
+        return getTasksList().stream()
+                .mapToInt(Task::getId)
+                .max()
+                .orElse(0);
+     }
 
     public List<Task> getTasksList() {
-        List<Task> taskAsTasks = new ArrayList<>();
-
-        for(String ts : getStringTasksList()) {
-           taskAsTasks.add(Task.fromJson(ts));
+        try {
+            List<Task> taskAsTasks = new ArrayList<>();
+            for(String task : getStringTasksList()) {
+                taskAsTasks.add(Task.fromJson(task));
+            }
+            return taskAsTasks;
+        }catch (Exception e) {
+            System.out.println("Vazio");
+            return null;
         }
-        return taskAsTasks;
     }
 
     private String[] getStringTasksList() {
-        // (?<=}) --> Antes da virgula tem um } ?
-        // \\s* --> Pode ou nao conter espaço e apaga
-        // (?=\{) --> Contem um { em seguida ?
-        // ^\[|]$ --> apaga [ do inicio (^) da linha e ] final (&)
-        return readDatabaseFile()
-                .trim()
+        String content = readDatabaseFile();
+
+        if (content == null || content.isBlank()) {
+            System.out.println("Arquivo vazio ou nulo");
+            return new String[0];
+        }
+
+        return content.trim()
                 .replaceAll("^\\[|]$", "")
                 .split("(?<=}),\\s*(?=\\{)");
     }
