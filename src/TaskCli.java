@@ -5,6 +5,12 @@ public class TaskCli {
     final private static String databaseName = "database.json";
     private static TaskFileManager taskFileManager = null;
 
+    static void main(String[] args) {
+        TaskCli taskCli = new TaskCli();
+        taskCli.doAction(args);
+    }
+
+    // Constructor
     TaskCli() {
         try {
             taskFileManager = new TaskFileManager(directory, databaseName);
@@ -12,26 +18,6 @@ public class TaskCli {
             taskFileManager.createJsonFile();
         } catch (Exception e) {
             System.out.println("Nao foi possivel verificar a base");
-        }
-    }
-
-    static void main(String[] args) {
-        TaskCli taskCli = new TaskCli();
-        taskCli.doAction(args);
-    }
-
-    public void test(){
-        taskFileManager.getLastId();
-    }
-
-    private static void addTask(String[] args) {
-        try {
-            String taskDescription = args[1];
-            int nextId = taskFileManager.getLastId() + 1;
-            Task newTask = new Task(nextId, taskDescription);
-            taskFileManager.saveTask(newTask);
-        } catch (IndexOutOfBoundsException e) {
-            System.out.println("Invalid argument, please use: TaskCli add [taskDescription]");
         }
     }
 
@@ -62,6 +48,62 @@ public class TaskCli {
             }
         } catch (IndexOutOfBoundsException e) {
             System.out.println("Insert a valid option [add, update, delete, mark-in-progress, mark-done or list]");
+        }
+    }
+
+    private static void addTask(String[] args) {
+        try {
+            String taskDescription = args[1];
+            int nextId = taskFileManager.getLastId() + 1;
+            Task newTask = new Task(nextId, taskDescription);
+            taskFileManager.saveTask(newTask);
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("Invalid argument, please use: TaskCli add [taskDescription]");
+        }
+    }
+
+    private static void updateTask(String[] args) {
+        try {
+            String taskDescription = args[2];
+            int taskId = Integer.parseInt(args[1]);
+            taskFileManager.updateTask(taskId, taskDescription);
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("Invalid argument, please use: TaskCli update [idDescription] [taskDescription]");
+        } catch (NumberFormatException e) {
+            System.out.println("Insert a valid id");
+        }
+    }
+
+    private static void deleteTask(String[] args) {
+        try {
+            int idDescription = Integer.parseInt(args[1]);
+            System.out.println("ID " + idDescription + " was deleted with success!");
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("Invalid argument, please use: TaskCli delete [idDescription]");
+        } catch (NumberFormatException e) {
+            System.out.println("Insert a valid id");
+        }
+    }
+
+    private static void markInProgress(String[] args) {
+        try {
+            int idDescription = Integer.parseInt(args[1]);
+            System.out.println("ID " + idDescription + " Marked as in-progress");
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("Invalid argument, please use: TaskCli mark-in-progress [idDescription]");
+        } catch (NumberFormatException e) {
+            System.out.println("Insert a valid id");
+        }
+    }
+
+    private static void markDone(String[] args) {
+        try {
+            int idDescription = Integer.parseInt(args[1]);
+            System.out.println("ID" + idDescription + " Marked as done!");
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("Invalid argument, please use: TaskCli mark-done [idDescription]");
+        } catch (NumberFormatException e) {
+            System.out.println("Insert a valid id");
         }
     }
 
@@ -105,54 +147,5 @@ public class TaskCli {
 
     private static void listAllTasks() {
         System.out.println("Listing all tasks.....");
-    }
-
-    private static void markDone(String[] args) {
-        try {
-            int idDescription = Integer.parseInt(args[1]);
-            System.out.println("ID" + idDescription + " Marked as done!");
-        } catch (IndexOutOfBoundsException e) {
-            System.out.println("Invalid argument, please use: TaskCli mark-done [idDescription]");
-        } catch (NumberFormatException e) {
-            System.out.println("Insert a valid id");
-        }
-    }
-
-    private static void markInProgress(String[] args) {
-        try {
-            int idDescription = Integer.parseInt(args[1]);
-            System.out.println("ID " + idDescription + " Marked as in-progress");
-        } catch (IndexOutOfBoundsException e) {
-            System.out.println("Invalid argument, please use: TaskCli mark-in-progress [idDescription]");
-        } catch (NumberFormatException e) {
-            System.out.println("Insert a valid id");
-        }
-    }
-
-    private static void deleteTask(String[] args) {
-        try {
-            int idDescription = Integer.parseInt(args[1]);
-            System.out.println("ID " + idDescription + " was deleted with success!");
-        } catch (IndexOutOfBoundsException e) {
-            System.out.println("Invalid argument, please use: TaskCli delete [idDescription]");
-        } catch (NumberFormatException e) {
-            System.out.println("Insert a valid id");
-        }
-    }
-
-    private static void updateTask(String[] args) {
-        try {
-            String taskDescription = args[2];
-            int idDescription = Integer.parseInt(args[1]);
-            System.out.println("Updating a task id: " + idDescription + " description: " + taskDescription);
-        } catch (IndexOutOfBoundsException e) {
-            System.out.println("Invalid argument, please use: TaskCli update [idDescription] [taskDescription]");
-        } catch (NumberFormatException e) {
-            System.out.println("Insert a valid id");
-        }
-    }
-
-    private static String getFullFilePath() {
-        return directory + "\\" + databaseName;
     }
 }

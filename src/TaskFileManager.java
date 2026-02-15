@@ -16,83 +16,47 @@ public class TaskFileManager {
         this.filename = filename;
     }
 
-    private String resolveDatabasePath() {
-        return Paths.get(directory, filename).toString();
-    }
-
     public int getLastId() {
         return getTasksList().stream()
                 .mapToInt(Task::getId)
                 .max()
                 .orElse(0);
-     }
-
-    public List<Task> getTasksList() {
-        try {
-            List<Task> taskAsTasks = new ArrayList<>();
-            for(String task : getStringTasksList()) {
-                taskAsTasks.add(Task.fromJson(task));
-            }
-            return taskAsTasks;
-        }catch (Exception e) {
-            System.out.println("Vazio");
-            return null;
-        }
-    }
-
-    private String[] getStringTasksList() {
-        String content = readDatabaseFile();
-
-        if (content == null || content.isBlank()) {
-            System.out.println("Arquivo vazio ou nulo");
-            return new String[0];
-        }
-
-        return content.trim()
-                .replaceAll("^\\[|]$", "")
-                .split("(?<=}),\\s*(?=\\{)");
     }
 
     public void saveTask(Task newTask) {
-        try{
-            String newDatabaseString = prepareNewStringDatabase(newTask);
-            FileWriter fileWriter = new FileWriter(resolveDatabasePath());
-            fileWriter.write(newDatabaseString);
-            fileWriter.close();
-            System.out.println("A task foi salva com sucesso [ID: " + newTask.getId() + "]");
-        } catch (IOException e) {
-            System.out.println("Não foi possivel salvar");
-        }
+        List<Task> tasks = getTasksList();
+        tasks.add(newTask);
+        saveTaskList(tasks);
+        System.out.println("A task foi salva com sucesso [ID: " + newTask.getId() + "]");
     }
 
-    private String prepareNewStringDatabase(Task newTask) {
-        String objTaskString = newTask.toJson();
-        String databaseString = readDatabaseFile();
-        if(databaseString.isEmpty()) {
-            return "[" + objTaskString + "]";
-        } else {
-            return removeClosingSquareBracket(databaseString) + ",\n" + objTaskString + "]";
-        }
-    }
-
-    public String readDatabaseFile() {
-        try {
-            Path path = Paths.get(resolveDatabasePath());
-            if(!Files.exists(path)) {
-                return "";
+    public void updateTask(int id, String description) {
+        List<Task> tasks = getTasksList();
+        if(!tasks.isEmpty()) {
+            boolean finded = false;
+            for(Task task : tasks) {
+                if(task.getId() == id) {
+                    task.setDescription(description);
+                    finded = true;
+                    break;
+                }
             }
-            return new String(Files.readAllBytes(path));
-        } catch (IOException e) {
-            throw new RuntimeException("Erro ao ler base de dados", e);
-        }
-    }
 
-    private String removeClosingSquareBracket(String json) {
-        int lastBracketIndex = json.lastIndexOf("]");
-        if (lastBracketIndex != -1) {
-            return json.substring(0, lastBracketIndex);
+            if(!finded) {
+                System.out.println("O ID não foi encontrado na base de dados");
+                return;
+            }
+
+            if(!saveTaskList(tasks)) {
+                System.out.println("Nao foi possivel atualizar a task");
+                return;
+            }
+
+            System.out.println("Task atualizada com sucesso!");
+
+        } else {
+            System.out.println("ID não encontrado, base de dados Vazia");
         }
-        return json;
     }
 
     public void createDirectory() {
@@ -106,14 +70,6 @@ public class TaskFileManager {
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    private void checkDirectoryExistence(File directoryFileObj) throws IOException {
-        if(directoryFileObj.exists()) {
-            System.out.println(" OK");
-        } else {
-            throw new IOException("WARNING: The directory could not be created.");
         }
     }
 
@@ -131,11 +87,79 @@ public class TaskFileManager {
         }
     }
 
+    private String resolveDatabasePath() {
+        return Paths.get(directory, filename).toString();
+    }
+
+    private void checkDirectoryExistence(File directoryFileObj) throws IOException {
+        if(directoryFileObj.exists()) {
+            System.out.println(" OK");
+        } else {
+            throw new IOException("WARNING: The directory could not be created.");
+        }
+    }
+
     private void checkFileExistence(File fileObj) throws IOException {
         if(fileObj.exists()) {
             System.out.println(" OK");
         } else {
             throw new IOException("WARNING: The file could not be created.");
+        }
+    }
+
+    public List<Task> getTasksList() {
+        List<Task> taskAsTasks = new ArrayList<>();
+        if(!(getStringTasksList().length == 0)) {
+            for(String task : getStringTasksList()) {
+                taskAsTasks.add(Task.fromJson(task));
+            }
+        }
+        return taskAsTasks;
+    }
+
+    private String[] getStringTasksList() {
+        String content = readDatabaseFile();
+
+        if (content == null || content.isBlank()) {
+            return new String[0];
+        }
+
+        return content.trim()
+                .replaceAll("^\\[|]$", "")
+                .split("(?<=}),\\s*(?=\\{)");
+    }
+
+    public String readDatabaseFile() {
+        try {
+            Path path = Paths.get(resolveDatabasePath());
+            if(!Files.exists(path)) {
+                return "";
+            }
+            return new String(Files.readAllBytes(path));
+        } catch (IOException e) {
+            throw new RuntimeException("Erro ao ler base de dados", e);
+        }
+    }
+
+    public boolean saveTaskList(List<Task> tasks) {
+        try {
+            FileWriter fileWriter = new FileWriter(resolveDatabasePath());
+            fileWriter.write("[");
+            for (int i = 0; i < tasks.size(); i++) {
+                boolean isLastTask = (i == tasks.size() - 1);
+                //System.out.println("Salvando... " + tasks.get(i));
+                if(isLastTask) {
+                    fileWriter.write(tasks.get(i).toJson());
+                } else {
+                    fileWriter.write(tasks.get(i).toJson() + ",");
+                }
+            }
+            fileWriter.write("]");
+            fileWriter.close();
+            return true;
+        } catch (IOException e) {
+            System.out.println("Ocorreu um erro ao tentar salver: " + e);
+            return false;
         }
     }
 }

@@ -35,6 +35,10 @@ public class Task {
         this.updatedAt = LocalDate.now();
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     private int getLastId() {
         return 0;
     }
