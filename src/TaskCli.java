@@ -77,7 +77,7 @@ public class TaskCli {
     private static void deleteTask(String[] args) {
         try {
             int idDescription = Integer.parseInt(args[1]);
-            System.out.println("ID " + idDescription + " was deleted with success!");
+            taskFileManager.deleteTask(idDescription);
         } catch (IndexOutOfBoundsException e) {
             System.out.println("Invalid argument, please use: TaskCli delete [idDescription]");
         } catch (NumberFormatException e) {
@@ -88,7 +88,7 @@ public class TaskCli {
     private static void markInProgress(String[] args) {
         try {
             int idDescription = Integer.parseInt(args[1]);
-            System.out.println("ID " + idDescription + " Marked as in-progress");
+            taskFileManager.markInProgress(idDescription);
         } catch (IndexOutOfBoundsException e) {
             System.out.println("Invalid argument, please use: TaskCli mark-in-progress [idDescription]");
         } catch (NumberFormatException e) {
@@ -99,7 +99,7 @@ public class TaskCli {
     private static void markDone(String[] args) {
         try {
             int idDescription = Integer.parseInt(args[1]);
-            System.out.println("ID" + idDescription + " Marked as done!");
+            taskFileManager.markDone(idDescription);
         } catch (IndexOutOfBoundsException e) {
             System.out.println("Invalid argument, please use: TaskCli mark-done [idDescription]");
         } catch (NumberFormatException e) {

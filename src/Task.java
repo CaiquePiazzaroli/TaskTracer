@@ -39,6 +39,14 @@ public class Task {
         this.description = description;
     }
 
+    public TaskStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TaskStatus status) {
+        this.status = status;
+    }
+
     private int getLastId() {
         return 0;
     }

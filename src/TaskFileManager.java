@@ -59,6 +59,85 @@ public class TaskFileManager {
         }
     }
 
+    public void deleteTask(int id) {
+        List<Task> tasks = getTasksList();
+        if(!tasks.isEmpty()) {
+            boolean finded = false;
+            for(Task task : tasks) {
+                if(task.getId() == id) {
+                    tasks.remove(task);
+                    finded = true;
+                    break;
+                }
+            }
+
+            if(!finded) {
+                System.out.println("O ID não foi encontrado na base de dados");
+                return;
+            }
+
+            if(!saveTaskList(tasks)) {
+                System.out.println("Nao foi possivel excluir a task");
+                return;
+            }
+
+            System.out.println("Task atualizada com sucesso!");
+        }
+
+    }
+
+    public void markInProgress(int id) {
+        List<Task> tasks = getTasksList();
+        if(!tasks.isEmpty()) {
+            boolean finded = false;
+            for(Task task : tasks) {
+                if(task.getId() == id) {
+                    task.setStatus(TaskStatus.IN_PROGRESS);
+                    finded = true;
+                    break;
+                }
+            }
+
+            if(!finded) {
+                System.out.println("O ID não foi encontrado na base de dados");
+                return;
+            }
+
+            if(!saveTaskList(tasks)) {
+                System.out.println("Nao foi possivel alterar o status da tarefa");
+                return;
+            }
+
+            System.out.println("Status alterado com sucesso");
+        }
+    }
+
+    public void markDone(int id) {
+        List<Task> tasks = getTasksList();
+        if(!tasks.isEmpty()) {
+            boolean finded = false;
+            for(Task task : tasks) {
+                if(task.getId() == id) {
+                    task.setStatus(TaskStatus.DONE);
+                    finded = true;
+                    break;
+                }
+            }
+
+            if(!finded) {
+                System.out.println("O ID não foi encontrado na base de dados");
+                return;
+            }
+
+            if(!saveTaskList(tasks)) {
+                System.out.println("Nao foi possivel alterar o status da tarefa");
+                return;
+            }
+
+            System.out.println("Status alterado com sucesso");
+        }
+    }
+
     public void createDirectory() {
         System.out.print("Directory check... ");
         try {
