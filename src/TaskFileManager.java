@@ -138,6 +138,35 @@ public class TaskFileManager {
         }
     }
 
+    public void listStatusTasks(String status) {
+        List<Task> tasks = getTasksList();
+        String statusSearched = status.trim().replace("-", "_").toUpperCase();
+        if(!tasks.isEmpty()) {
+            boolean haveTask = false;
+            for(Task task : tasks) {
+                if(task.getStatusString().equalsIgnoreCase(statusSearched)) {
+                    System.out.println(task.toJson());
+                    haveTask = true;
+                }
+            }
+
+            if(!haveTask) {
+                System.out.println("Não existem taks em " + status);
+            }
+        }
+    }
+
+    public void listAllTasks() {
+        List<Task> tasks = getTasksList();
+        if(!tasks.isEmpty()) {
+            for(Task task : tasks) {
+                System.out.println(task.toJson());
+            }
+        } else {
+            System.out.println("Lista vazia");
+        }
+    }
+
     public void createDirectory() {
         System.out.print("Directory check... ");
         try {
@@ -226,7 +255,6 @@ public class TaskFileManager {
             fileWriter.write("[");
             for (int i = 0; i < tasks.size(); i++) {
                 boolean isLastTask = (i == tasks.size() - 1);
-                //System.out.println("Salvando... " + tasks.get(i));
                 if(isLastTask) {
                     fileWriter.write(tasks.get(i).toJson());
                 } else {

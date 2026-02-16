@@ -1,5 +1,3 @@
-import java.util.List;
-
 public class TaskCli {
     final private static String directory = "C:\\task-cli";
     final private static String databaseName = "database.json";
@@ -111,7 +109,7 @@ public class TaskCli {
         try {
             String status = args[1];
             if(checkValidStatusArgument(status)) {
-                listStatusTasks(status);
+                listTasksFilter(status);
             } else {
                 throw new IllegalArgumentException("The type of status task is invalid");
             }
@@ -129,23 +127,11 @@ public class TaskCli {
         return  haveTodoArgument || haveInProgressArgument || haveDoneArgument;
     }
 
-    private static void listStatusTasks(String status) {
-        switch (status) {
-            case "done":
-                System.out.println("Show all DONE tasks!");
-                break;
-            case "todo":
-                System.out.println("Show all TODO tasks!");
-                break;
-            case "in-progress":
-                System.out.println("Show All IN_PROGRESS tasks!");
-                break;
-            default:
-                System.out.println("Insert a valid status -> (done, todo ou in-progress)");
-        }
+    private static void listTasksFilter(String status) {
+        taskFileManager.listStatusTasks(status);
     }
 
     private static void listAllTasks() {
-        System.out.println("Listing all tasks.....");
+        taskFileManager.listAllTasks();
     }
 }

@@ -43,6 +43,10 @@ public class Task {
         return status;
     }
 
+    public String getStatusString() {
+        return status.toString();
+    }
+
     public void setStatus(TaskStatus status) {
         this.status = status;
     }
